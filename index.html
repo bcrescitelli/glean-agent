@@ -10,23 +10,34 @@
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
             background-color: #ffffff;
         }
 
-        /* 2. Style the container to fill the screen */
         #glean-app {
-            position: relative;
-            display: block;
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
         }
 
-        /* CSS Fail-safe: Forces any sidebar elements to stay hidden if the SDK toggle lags */
-        [class*="sidebar"], [class*="Sidebar"], [class*="nav"] {
+        /* STAGE 1: Aggressive CSS Hiding */
+        /* This targets the sidebar classes commonly used by Glean */
+        [class*="sidebar"], 
+        [class*="Sidebar"], 
+        [class*="nav"], 
+        [class*="LeftNav"],
+        aside {
             display: none !important;
+            width: 0 !important;
+            visibility: hidden !important;
+        }
+
+        /* STAGE 2: Force the main chat area to take up 100% width */
+        main, [class*="MainContent"], [class*="ChatContainer"] {
+            margin-left: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
     </style>
 </head>
@@ -35,18 +46,32 @@
     <div id="glean-app"></div>
 
     <script>
-        // 3. Display the agent with sidebar disabled
         document.addEventListener('DOMContentLoaded', () => {
-            const checkSDK = setInterval(() => {
+            const initGlean = setInterval(() => {
                 if (window.GleanWebSDK) {
-                    clearInterval(checkSDK);
+                    clearInterval(initGlean);
+                    
                     GleanWebSDK.renderChat(document.getElementById('glean-app'), {
                         agentId: "84a6c451f15f4f6fa057c58db962d0ff",
-                        hideSidebar: true, // Hides the recent chats/sidebar
-                        showCloseButton: false // Keeps it clean for an embed
+                        hideSidebar: true,
+                        showCloseButton: false,
+                        // Adding extra parameters to force a "embedded" feel
+                        embedded: true,
+                        containerType: "full-width" 
                     });
+
+                    // STAGE 3: Javascript "Clean up" 
+                    // This waits 2 seconds after loading to find and delete the sidebar manually
+                    setTimeout(() => {
+                        const sidebar = document.querySelector('[class*="sidebar"]') || 
+                                        document.querySelector('aside') || 
+                                        document.querySelector('[class*="nav"]');
+                        if (sidebar) {
+                            sidebar.style.display = 'none';
+                        }
+                    }, 2000);
                 }
-            }, 100); // Checks every 100ms for the SDK to load
+            }, 100);
         });
     </script>
 </body>
