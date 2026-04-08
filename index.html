@@ -13,13 +13,20 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
+            background-color: #ffffff;
         }
+
         /* 2. Style the container to fill the screen */
         #glean-app {
             position: relative;
             display: block;
             height: 100vh;
             width: 100vw;
+        }
+
+        /* CSS Fail-safe: Forces any sidebar elements to stay hidden if the SDK toggle lags */
+        [class*="sidebar"], [class*="Sidebar"], [class*="nav"] {
+            display: none !important;
         }
     </style>
 </head>
@@ -28,13 +35,18 @@
     <div id="glean-app"></div>
 
     <script>
-        // 3. Display the agent
+        // 3. Display the agent with sidebar disabled
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.GleanWebSDK) {
-                GleanWebSDK.renderChat(document.getElementById('glean-app'), {
-                    agentId: "84a6c451f15f4f6fa057c58db962d0ff"
-                });
-            }
+            const checkSDK = setInterval(() => {
+                if (window.GleanWebSDK) {
+                    clearInterval(checkSDK);
+                    GleanWebSDK.renderChat(document.getElementById('glean-app'), {
+                        agentId: "84a6c451f15f4f6fa057c58db962d0ff",
+                        hideSidebar: true, // Hides the recent chats/sidebar
+                        showCloseButton: false // Keeps it clean for an embed
+                    });
+                }
+            }, 100); // Checks every 100ms for the SDK to load
         });
     </script>
 </body>
