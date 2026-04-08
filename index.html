@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glean Product Agent</title>
+    <script defer src="https://app.glean.com/embedded-search-latest.min.js"></script>
+    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        /* 2. Style the container to fill the screen */
+        #glean-app {
+            position: relative;
+            display: block;
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="glean-app"></div>
+
+    <script>
+        // 3. Display the agent
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.GleanWebSDK) {
+                GleanWebSDK.renderChat(document.getElementById('glean-app'), {
+                    agentId: "84a6c451f15f4f6fa057c58db962d0ff"
+                });
+            }
+        });
+    </script>
+</body>
+</html>
